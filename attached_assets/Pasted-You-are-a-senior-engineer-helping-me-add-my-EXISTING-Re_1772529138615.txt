@@ -1,0 +1,86 @@
+You are a senior engineer helping me add my EXISTING Replit app to GitHub with proper version control.
+
+GOAL
+- Put this current codebase into a GitHub repo (public or private).
+- Keep secrets out of GitHub.
+- Set up a clean branch flow and basic CI.
+
+DO THIS IN ORDER (and show me the exact commands you run):
+
+1) PRE-FLIGHT CHECKS
+- Verify whether this project already has a Git repo:
+  - if .git exists, show `git status` and current remotes (`git remote -v`)
+  - if not, initialize a new Git repo.
+- Configure git identity if missing:
+  - git config user.name "YOUR_NAME"
+  - git config user.email "YOUR_EMAIL"
+
+2) IGNORE SECRETS + ADD ENV TEMPLATE
+- Ensure `.gitignore` includes:
+  - node_modules/
+  - .expo/
+  - dist/
+  - build/
+  - .env
+  - *.log
+- If a `.env` exists, DO NOT COMMIT IT.
+- Create `.env.example` with placeholders for all env vars used.
+- Update README with a “Setup” section listing required env vars.
+
+3) CLEAN INITIAL COMMIT
+- Ensure the repo is on `main` branch.
+- Add a minimal `README.md` (if missing) and `LICENSE` (MIT).
+- Create a clean initial commit:
+  - git add .
+  - git commit -m "chore: initial commit"
+
+4) CREATE GITHUB REPO + PUSH
+- First check if GitHub CLI is available:
+  - `gh --version`
+IF `gh` IS AVAILABLE:
+- Ask me for repo name and whether it should be public or private (default private).
+- Create the repo and push:
+  - gh repo create <REPO_NAME> --private --source=. --remote=origin --push
+  - (or --public if I choose public)
+IF `gh` IS NOT AVAILABLE:
+- Print exact manual steps:
+  - Go to GitHub → New repository → create <REPO_NAME> (public/private)
+  - Copy the repo URL
+- Then run:
+  - git branch -M main
+  - git remote add origin <GITHUB_REPO_URL>
+  - git push -u origin main
+
+5) BRANCHING MODEL
+- Create and push a develop branch:
+  - git checkout -b develop
+  - git push -u origin develop
+- Show me how to create feature branches:
+  - git checkout develop
+  - git checkout -b feature/<short-name>
+
+6) ADD BASIC CI (GitHub Actions)
+- Add `.github/workflows/ci.yml` that runs on PRs to main/develop:
+  - checkout
+  - setup-node (LTS)
+  - npm ci
+  - npm run lint (if exists)
+  - npm run typecheck (or tsc --noEmit)
+  - npm test (only if tests exist; otherwise skip gracefully)
+- If package scripts don’t exist, add:
+  - "lint"
+  - "typecheck"
+
+7) FINAL CHECK
+- Show:
+  - `git status`
+  - `git log --oneline --max-count=5`
+  - `git remote -v`
+- Confirm the GitHub repo has main + develop branches and the CI workflow file.
+
+IMPORTANT RULES
+- Never commit secrets or API keys.
+- If you detect secrets already committed, STOP and rewrite history safely (explain how).
+- Keep changes minimal and incremental.
+
+Now execute these steps on this codebase and tell me what you did + what I must click/do in GitHub (if anything).

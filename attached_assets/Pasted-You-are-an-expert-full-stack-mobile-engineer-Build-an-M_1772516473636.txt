@@ -1,0 +1,152 @@
+You are an expert full-stack mobile engineer. Build an MVP “reverse real estate marketplace” for Oman.
+
+NON-NEGOTIABLE: PROPER VERSION CONTROL (GitHub)
+- Initialize a Git repo in the Replit project.
+- Create a GitHub repo (or provide exact instructions + commands if you can’t create it directly).
+- Push code to GitHub with clean commit history.
+- Use a simple branching model:
+  - main = stable
+  - develop = active work
+  - feature/* branches for features
+- Add:
+  - .gitignore (Expo + Node + Firebase)
+  - README.md with setup + run instructions
+  - LICENSE (MIT)
+  - CHANGELOG.md (basic)
+  - CONTRIBUTING.md (basic)
+- Add GitHub Actions CI workflow:
+  - install deps
+  - typecheck (tsc)
+  - lint (eslint)
+  - (optional) tests placeholder
+- Add conventional commits (or at least consistent commit messages).
+- Ensure secrets are never committed:
+  - use .env and .env.example
+  - document env vars in README
+
+STACK (keep it simple):
+- React Native (Expo) for iOS + Android
+- Firebase: Phone OTP Auth, Firestore, Cloud Functions (minimal), FCM push notifications
+- TypeScript
+
+CORE IDEA:
+Tenants/Buyers post property requests. Brokers send matching offers. Users chat in-app, or call/WhatsApp directly (phone numbers visible).
+
+ROLES:
+1) Requester (tenant/buyer)
+2) Broker/Agent
+3) Admin (minimal; simplest implementation is an “admin mode” screen for allowlisted admin phone numbers)
+
+MVP REQUIREMENTS (MUST HAVE)
+
+AUTH & ONBOARDING
+- Phone OTP sign-in for all users
+- First login: choose role (Requester or Broker)
+- Profiles:
+  - Requester: name, phone
+  - Broker: name, phone, optional agencyName, serviceAreas[], propertyTypes[], rentBuyModes[] (rent/buy/both)
+
+REQUESTS (Requester)
+- Create a Request with REQUIRED fields:
+  - transactionType: Rent or Buy
+  - propertyType
+  - area (free text OR simple list)
+  - budget (number, OMR)
+- My Requests list with status (Open/Closed)
+- Request detail:
+  - list Offers
+  - close request with outcome: rented/bought/not interested/still looking
+
+BROKER DISCOVERY
+- Broker Home has 2 tabs:
+  1) Matched Requests (simple matching using brokerProfile filters; keep simple)
+  2) All Requests feed with filters (transactionType, propertyType, area; budget optional)
+- Broker can open request detail and send offer
+
+OFFERS
+- Offer creation:
+  - required message text
+  - optional link URL
+  - optional price number
+- Brokers can send either “I have options, let’s talk” or include link/details
+
+CHAT
+- One thread per (Request, Requester, Broker)
+- Realtime Firestore chat: message list + input + send
+
+CONTACT ACTIONS
+- Call button -> opens dialer with number
+- WhatsApp button -> deep link with number
+- No in-app calling, no file sharing
+
+NOTIFICATIONS
+- Requester: new offer + new message
+- Broker: new message (+ optional new matched request)
+
+SAFETY / MODERATION
+- Requester can Block and Report broker
+- Blocking prevents broker from sending offers/messages to that requester
+- Admin tools:
+  - list users/requests/offers/reports
+  - disable user
+  - remove request/offer
+Implement admin by checking if logged-in phone is in ADMIN_PHONE_ALLOWLIST (env var).
+
+FIRESTORE DATA MODEL
+- users/{userId}
+- requests/{requestId}
+- offers/{offerId}
+- threads/{threadId}
+- threads/{threadId}/messages/{messageId}
+- blocks/{blockId}
+- reports/{reportId}
+
+SECURITY RULES
+- Users: only self profile
+- Requesters: CRUD own requests
+- Brokers: read requests
+- Offers: brokers create; requesters read offers for their requests
+- Messages: only thread participants
+- Blocks: enforced to prevent offers/messages
+- Admin override: allowlisted admins can moderate
+
+PROJECT STRUCTURE
+- /src/screens
+- /src/components
+- /src/navigation
+- /src/services/firebase
+- /src/types
+- /functions (firebase functions, minimal)
+
+DELIVERABLES
+- Working Expo app + Firebase integration
+- README with step-by-step Firebase setup + running locally
+- .env.example
+- Basic seed data option (script or dev button)
+
+IMPLEMENTATION PLAN (use commits per step)
+Commit 1: repo bootstrap (Expo TS, navigation, lint, formatting, README skeleton)
+Commit 2: Firebase config + auth (phone OTP)
+Commit 3: Role selection + profiles
+Commit 4: Requester flows (create request, list, detail, close)
+Commit 5: Broker feeds (matched + all) + request detail
+Commit 6: Offers (create + view)
+Commit 7: Chat threads + messages
+Commit 8: Call/WhatsApp actions
+Commit 9: Notifications (basic)
+Commit 10: Block/report + admin screens + security rules
+Commit 11: Polish (loading/empty states) + docs
+
+GITHUB INSTRUCTIONS (must include in README)
+- How to create GitHub repo
+- How to add remote and push:
+  git init
+  git add .
+  git commit -m "chore: initial commit"
+  git branch -M main
+  git remote add origin <YOUR_GITHUB_REPO_URL>
+  git push -u origin main
+- How to create develop branch and push it
+- How to create feature branches and PRs
+
+Start by scaffolding the project and setting up GitHub repo + CI before building features.
